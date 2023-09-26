@@ -8,13 +8,21 @@ using SaveDataVC = SaveDataV3; // 교체
 
 public static class SaveLoadSystem
 {
-    //public enum Modes
-    //{
-    //    Json,
-    //    Binary,
-    //}
-
+    public enum Modes
+    {
+        Json,
+        Binary,
+        EncryptedBinary
+    }
+    public static Modes FileMode { get; } = Modes.Json;
     public static int SaveDataVersion { get; } = 3; // 교체
+    private static string[] SaveSlotFileNames =
+    {
+        "Save0.json",
+        "Save1.json",
+        "Save2.json"
+    };
+    private static string AutoSaveFileName { get; } = "AutoSave";
     public static string SaveDirectory
     {
         get
@@ -23,6 +31,25 @@ public static class SaveLoadSystem
         }
     }
 
+    public static void AutoSave(SaveData data)
+    {
+        Save(data, AutoSaveFileName);
+    }
+
+    public static SaveData AutoLoad()
+    {
+        return Load(AutoSaveFileName);
+    }
+
+    public static void Save(SaveData data, int slot)
+    {
+        Save(data, SaveSlotFileNames[slot]);
+    }
+
+    public static SaveData Load(int slot)
+    {
+        return Load(SaveSlotFileNames[slot]);
+    }
 
     public static void Save(SaveData data, string fileName)
     {
