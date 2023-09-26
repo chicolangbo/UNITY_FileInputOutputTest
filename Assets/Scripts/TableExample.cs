@@ -5,20 +5,14 @@ using CsvHelper;
 using CsvHelper.Configuration;
 using System.IO;
 using System.Globalization;
-
-public class StringElement
-{
-    public string ID { get; set; }
-    public string KOREAN { get; set; }
-}
+using SaveDataVC = SaveDataV3; // ±³Ã¼
 
 public class TableExample : MonoBehaviour
 {
-    public TextAsset csvFile;
-
-    public void Start()
+    public void Update()
     {
-        var str = DataTableMgr.GetTable<StringTable>().GetString("YOU DIE");
-        Debug.Log(str);
+        //var saveData = new SaveDataV1();
+        //saveData.Gold = 100;
+        //SaveLoadSystem.Save(saveData, "test1.json");
     }
 }

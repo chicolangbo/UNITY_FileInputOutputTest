@@ -4,16 +4,19 @@ using UnityEngine;
 using Newtonsoft.Json;
 using System.IO;
 using UnityEditor.UIElements;
+using SaveDataVC = SaveDataV3; // 교체
 
 [System.Serializable]
 public struct CubeInfo
 {
+    public string name;
     public Vector3 position;
     public Quaternion rotation;
     public Vector3 scale;
 
-    public CubeInfo(Vector3 pos, Quaternion rot, Vector3 sc)
+    public CubeInfo(string n, Vector3 pos, Quaternion rot, Vector3 sc)
     {
+        name = n;
         position = pos;
         rotation = rot;
         scale = sc;
@@ -42,19 +45,14 @@ public class CubeSaveLoad : MonoBehaviour
 
     public void Save()
     {
-        var cubeList = new List<CubeInfo>();
+        var saveData = new SaveDataVC();
+
         var cubes = GameObject.FindGameObjectsWithTag("cube");
         foreach(var cube in cubes)
         {
-            cubeList.Add(new CubeInfo(cube.transform.position, cube.transform.rotation, cube.transform.localScale));
+            saveData.cubeList.Add(new CubeInfo(cube.name, cube.transform.position, cube.transform.rotation, cube.transform.localScale));
         }
-
-        var json = JsonConvert.SerializeObject(cubeList, new Vector3Converter(), new QuaternionConverter());
-        Debug.Log(json);
-
-        var path = Path.Combine(Application.persistentDataPath, "cubes.json"); // 윈도우에서 허용하는 빌드했을 때 읽기 쓰기 가능한 경로를 리턴해줌
-        Debug.Log(path);
-        File.WriteAllText(path, json);
+        SaveLoadSystem.Save(saveData, "test2.json");
     }
 
     public void Clear()
@@ -68,14 +66,13 @@ public class CubeSaveLoad : MonoBehaviour
 
     public void Load()
     {
-        var path = Path.Combine(Application.persistentDataPath, "cubes.json");
-        var json = File.ReadAllText(path);
-        var cubeInfoList = JsonConvert.DeserializeObject<List<CubeInfo>>(json, new Vector3Converter(), new QuaternionConverter());
+        SaveDataVC loadData = (SaveDataVC)SaveLoadSystem.Load("test2.json");
 
-        foreach(var cubeInfo in cubeInfoList)
+        foreach (var cubeInfo in loadData.cubeList)
         {
             var obj = Instantiate(prefab, cubeInfo.position, cubeInfo.rotation);
             obj.transform.localScale = cubeInfo.scale;
+            obj.name = cubeInfo.name;
         }
     }
 }
