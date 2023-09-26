@@ -11,6 +11,13 @@ public struct CubeInfo
     public Vector3 position;
     public Quaternion rotation;
     public Vector3 scale;
+
+    public CubeInfo(Vector3 pos, Quaternion rot, Vector3 sc)
+    {
+        position = pos;
+        rotation = rot;
+        scale = sc;
+    }
 }
 
 public class CubeSaveLoad : MonoBehaviour
@@ -39,7 +46,7 @@ public class CubeSaveLoad : MonoBehaviour
         var cubes = GameObject.FindGameObjectsWithTag("cube");
         foreach(var cube in cubes)
         {
-            cubeList.Add(new CubeInfo());
+            cubeList.Add(new CubeInfo(cube.transform.position, cube.transform.rotation, cube.transform.localScale));
         }
 
         var json = JsonConvert.SerializeObject(cubeList, new Vector3Converter(), new QuaternionConverter());
@@ -63,12 +70,12 @@ public class CubeSaveLoad : MonoBehaviour
     {
         var path = Path.Combine(Application.persistentDataPath, "cubes.json");
         var json = File.ReadAllText(path);
-        var cubePosList = JsonConvert.DeserializeObject<List<(Vector3, Quaternion,Vector3)>>(json, new Vector3Converter(), new QuaternionConverter());
+        var cubeInfoList = JsonConvert.DeserializeObject<List<CubeInfo>>(json, new Vector3Converter(), new QuaternionConverter());
 
-        foreach(var item in cubePosList)
+        foreach(var cubeInfo in cubeInfoList)
         {
-            var obj = Instantiate(prefab, item.Item1, item.Item2);
-            obj.transform.localScale = item.Item3;
+            var obj = Instantiate(prefab, cubeInfo.position, cubeInfo.rotation);
+            obj.transform.localScale = cubeInfo.scale;
         }
     }
 }

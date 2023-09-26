@@ -134,10 +134,5 @@ public class JsonTest : MonoBehaviour
             //var json = JsonConvert.SerializeObject(info, new Vector3Converter());
             //Debug.Log(json);
         }
-
-        // 6
-        {
-            
-        }
     }
 }
